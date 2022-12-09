@@ -1,0 +1,16 @@
+{
+  "name": "@oughtabee/mysql",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Alex Collette",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@oughtabee/common": "workspace:^",
+    "@types/node": "^18.11.12",
+    "lodash": "^4.17.21",
+    "lodash.set": "^4.3.2",
+    "mysql": "^2.18.1"
+  }
+}

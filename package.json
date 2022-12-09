@@ -5,7 +5,7 @@
   "repository": "git@github.com:Oughtabee/oughtabee-ecosystem.git",
   "author": "randomdude583 <alex@hiddenquarter.com>",
   "license": "MIT",
-
+  "private": true,
   "scripts": {
     "docker:build": "docker-compose --env-file ./env/.env build --parallel --build-arg SSH_KEY=\"$(cat $HOME/.ssh/id_rsa)\"",
     "docker:build:hard": "docker-compose --env-file ./env/.env build --parallel --no-cache --force-rm --compress --build-arg SSH_KEY=\"$(cat $HOME/.ssh/id_rsa)\"",
@@ -14,5 +14,9 @@
     "docker:clean": "docker-compose --env-file ./env/.env rm -fsv && yarn docker:build",
     "docker:clean:hard": "docker-compose --env-file ./env/.env rm -fsv && yarn docker:volumes:rm && yarn docker:build:hard",
     "docker:stop": "docker-compose --env-file ./env/.env down"
-  }
+  },
+  "workspaces": [
+    "library/*",
+    "service/*"
+  ]
 }

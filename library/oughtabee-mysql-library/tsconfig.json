@@ -1,0 +1,40 @@
+
+{
+    "compilerOptions": {
+      "baseUrl": "./",
+      "rootDir": "./src",
+      "module": "commonjs",
+      "target": "es2021",
+      "lib": ["dom", "es2021"],
+      "sourceMap": true,
+      "allowSyntheticDefaultImports": true,
+      "skipLibCheck": true,
+      "resolveJsonModule": true,
+      "allowJs": true,
+      "checkJs": false,
+      "useUnknownInCatchVariables": false,
+      "isolatedModules": true,
+      "esModuleInterop": true,
+      "strict": true,
+      "noImplicitAny": false,
+      "moduleResolution": "node",
+      "outDir": "./dist",
+      "paths": {
+        "@src/*": ["src/*"]
+      }
+    },
+    "ts-node": {
+      "swc": true
+    },
+    "include": ["./src"],
+    "exclude": [
+      "node_modules",
+      "**/node_modules/*",
+      "**/*.spec.ts",
+      "**/*.spec.tsx",
+      "**/*.map",
+      "**/library/*",
+      "library"
+    ],
+    "noEmit": true
+  }
