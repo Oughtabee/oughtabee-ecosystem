@@ -23,5 +23,40 @@ services:
     networks:
       - net
 
+  # oughtabee-interaction-service:
+  #   restart: always
+  #   volumes:
+  #     - ./:/usr/app
+  #     - /usr/app/.yarn/cache
+  #     - /usr/app/node_modules
+  #   build:
+  #     args:
+  #       - PORT=${PORT_INTERACTION_SERVICE}
+  #     context: ./
+  #     dockerfile: ./service/oughtabee-interaction-service/development.Dockerfile
+  #   env_file:
+  #     - ./env/.env
+  #     - ./env/.env.user.secret
+  #   environment:
+  #     - PORT=${PORT_INTERACTION_SERVICE}
+  #   expose:
+  #     - "${PORT_INTERACTION_SERVICE}"
+  #   ports:
+  #     - "${PORT_INTERACTION_SERVICE}:${PORT_INTERACTION_SERVICE}"
+  #   networks:
+  #     - net
+  #   depends_on:
+  #     - mysql
+  #   command:
+  #     [
+  #       "./docker-wait-for-it.sh",
+  #       "mysql:3306",
+  #       "--",
+  #       "yarn",
+  #       "workspace",
+  #       "@evoca/interaction-service",
+  #       "start:docker"
+  #     ]
+
 networks:
   net: null

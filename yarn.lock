@@ -48,7 +48,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@oughtabee/mysql@workspace:library/oughtabee-mysql-library":
+"@oughtabee/mysql@workspace:^, @oughtabee/mysql@workspace:library/oughtabee-mysql-library":
   version: 0.0.0-use.local
   resolution: "@oughtabee/mysql@workspace:library/oughtabee-mysql-library"
   dependencies:
@@ -57,6 +57,7 @@ __metadata:
     lodash: ^4.17.21
     lodash.set: ^4.3.2
     mysql: ^2.18.1
+    typescript: ^4.9.4
   languageName: unknown
   linkType: soft
 
@@ -202,6 +203,9 @@ __metadata:
 "oughtabee-interaction-service@workspace:service/oughtabee-interaction-service":
   version: 0.0.0-use.local
   resolution: "oughtabee-interaction-service@workspace:service/oughtabee-interaction-service"
+  dependencies:
+    "@oughtabee/common": "workspace:^"
+    "@oughtabee/mysql": "workspace:^"
   languageName: unknown
   linkType: soft
 

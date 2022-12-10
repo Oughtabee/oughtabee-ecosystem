@@ -1,0 +1,12 @@
+{
+  "name": "oughtabee-interaction-service",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Alex Collette",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@oughtabee/common": "workspace:^",
+    "@oughtabee/mysql": "workspace:^"
+  }
+}

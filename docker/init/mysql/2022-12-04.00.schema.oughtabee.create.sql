@@ -10,18 +10,19 @@ CREATE TABLE `pin` (
     `title` varchar(250) NOT NULL,
     `location` point NOT NULL,
     `json_data` json NOT NULL,
-    `created_by` bigint(20) NOT NULL,
+    `author` bigint(20) NOT NULL,
     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `deleted_at` datetime NULL,
-    PRIMARY KEY(id)
+    PRIMARY KEY(id),
+    SPATIAL INDEX `SPATIAL` (`location`)
 );
 
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE `comment` (
 	`id` bigint(20) NOT NULL AUTO_INCREMENT,
 	`json_data` json NOT NULL,
-	`created_by` bigint(20) NOT NULL,
+	`author` bigint(20) NOT NULL,
     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `deleted_at` datetime NULL,
