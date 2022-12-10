@@ -21,6 +21,8 @@ CREATE TABLE `pin` (
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE `comment` (
 	`id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `parent` bigint(20) NOT NULL,
+    `text` varchar(1000) NOT NULL,
 	`json_data` json NOT NULL,
 	`author` bigint(20) NOT NULL,
     `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
