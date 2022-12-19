@@ -7,21 +7,28 @@ const logger = new Logger(__filename);
 const TABLE = 'comment';
 const COLUMNS = [
     'id',
-    'parent',
+    'pin_id',
     'text',
     'json_data',
-    'author',
+    'user_id',
     ...mysql.helpers.TIMESTAMP_COLUMNS
-]
+];
+
+const VOTE_TABLE = 'comment_vote';
+const VOTE_COLUMNS = [
+    'comment_id',
+    'user_id',
+    'vote'
+];
 
 
 interface getManyParams {
-    parent: number,
+    pin_id: number,
     offset?: number,
     limit?: number
-};
-const getMany = async ({ parent, offset = 0, limit = 50 }: getManyParams) => {
-    logger.extra({ parent, offset, limit })
+}; //TODO rough vote count will be stored in json_data
+const getMany = async ({ pin_id, offset = 0, limit = 50 }: getManyParams) => {
+    logger.extra({ pin_id, offset, limit })
 
     const stmt = `
     SELECT 
@@ -31,20 +38,20 @@ const getMany = async ({ parent, offset = 0, limit = 50 }: getManyParams) => {
     WHERE
         deleted_at IS NULL
     AND
-        parent = ?
+        pin_id = ?
     LIMIT ?, ?
     `;
 
-    const res = await mysql.read.query(stmt, [parent, offset, limit]);
+    const res = await mysql.read.query(stmt, [pin_id, offset, limit]);
 
     return mysql.helpers.parseArrayOfObjFields(res);
 }
 
 interface createOneParams {
-    parent: number,
+    pin_id: number,
     text: string,
     json_data: {},
-    author: number
+    user_id: number
  };
 const createOne = async (values: createOneParams) => {
     logger.extra({ values });
@@ -57,10 +64,10 @@ const createOne = async (values: createOneParams) => {
     `;
 
     const params:any = [
-        values.parent, 
+        values.pin_id, 
         values.text, 
         JSON.stringify(values.json_data), 
-        values.author
+        values.user_id
     ];
 
     const res = await mysql.write.query(stmt, params);
@@ -95,11 +102,50 @@ const deleteOne = async ({ id, hard = false }: deleteOneParams) => {
 
         await mysql.write.query(stmt, [id]);
     };
+} 
+
+interface voteOneParams { comment_id: number, user_id: number, vote: boolean }
+const voteOne = async ({ comment_id, user_id, vote }: voteOneParams) => {
+    logger.extra({ comment_id, user_id, vote });
+
+    const stmt = `
+    REPLACE INTO ${VOTE_TABLE}
+        (${VOTE_COLUMNS})
+    VALUES
+        (?, ?, ?);
+    `;
+
+    const params:any = [comment_id, user_id, vote];
+
+    await mysql.write.query(stmt, params);
+}
+
+//TODO move this into an asyncronous task
+interface getVotesParams { comment_id: number }
+const getVotes = async ({ comment_id }: getVotesParams) => {
+    logger.extra({});
+
+    const stmt = `
+    SELECT 
+	    comment_id,
+        SUM(vote) AS upvote,
+        COUNT(vote) - SUM(vote) AS downvote
+    FROM 
+        ${VOTE_TABLE}
+    WHERE
+        comment_id = ?;
+    `;
+
+    const res = await mysql.read.query(stmt, [comment_id]);
+
+    return mysql.helpers.parseObjFields(res);
 }
 
 
 export default {
     getMany,
     createOne,
-    deleteOne
+    deleteOne,
+    voteOne,
+    getVotes
 }

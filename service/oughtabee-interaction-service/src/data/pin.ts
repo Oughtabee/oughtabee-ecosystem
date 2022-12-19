@@ -9,7 +9,16 @@ const COLUMNS = [
     'title',
     'location',
     'json_data',
-    'author',
+    'user_id',
+    ...mysql.helpers.TIMESTAMP_COLUMNS
+];
+
+const IMAGE_TABLE = 'pin_image';
+const IMAGE_COLUMNS = [
+    'id',
+    'pin_id',
+    'user_id',
+    'image_url',
     ...mysql.helpers.TIMESTAMP_COLUMNS
 ];
 
@@ -35,9 +44,8 @@ export const getOne = async ({ id }: getOneParams) => {
     return mysql.helpers.parseObjFields(res);
 };
 
-
 interface getManyParams { 
-    author?: number, 
+    user_id?: number, 
     bounds?: {
         north: number,
         east: number,
@@ -47,8 +55,8 @@ interface getManyParams {
     offset?: number, 
     limit?: number 
 };
-export const getMany = async ({ author, bounds, offset = 0, limit = 100 }: getManyParams) => {
-    logger.extra({ author, bounds, offset, limit })
+export const getMany = async ({ user_id, bounds, offset = 0, limit = 100 }: getManyParams) => {
+    logger.extra({ user_id, bounds, offset, limit })
 
     const stmt = `
     SELECT
@@ -58,7 +66,7 @@ export const getMany = async ({ author, bounds, offset = 0, limit = 100 }: getMa
     WHERE
         deleted_at IS NULL
     ${bounds? `AND ST_CONTAINS( Envelope(GeomFromText('LINESTRING(? ?,? ?)')), location)`: ''}
-    ${author? 'AND author = ?': ''}
+    ${user_id? 'AND user_id = ?': ''}
     LIMIT ?, ?
     `;
 
@@ -66,8 +74,8 @@ export const getMany = async ({ author, bounds, offset = 0, limit = 100 }: getMa
     if(bounds){
         params.push(bounds.north, bounds.east, bounds.south, bounds.west);
     }
-    if(author){
-        params.push(author);
+    if(user_id){
+        params.push(user_id);
     }
     params.push(offset, limit);
 
@@ -82,7 +90,7 @@ interface createOneParams {
     title: string,
     location: [number, number],
     json_data: {},
-    author: number
+    user_id: number
 }
 export const createOne = async (values: createOneParams) => {
     logger.extra({ values });
@@ -99,7 +107,7 @@ export const createOne = async (values: createOneParams) => {
     params.push(values.location[0]);
     params.push(values.location[1]);
     params.push(JSON.stringify(values.json_data));
-    params.push(values.author);
+    params.push(values.user_id);
 
 
     const res = await mysql.write.query(stmt, params);
@@ -138,10 +146,48 @@ export const deleteOne = async ({ id, hard = false }: deleteOneParams) => {
     }
 };
 
+interface getImagesParams { 
+    pin_id: number, 
+    offset?: number, 
+    limit?: number
+}
+const getImages = async ({ pin_id, offset = 0, limit = 10 }: getImagesParams) => {
+    logger.extra({pin_id});
+
+    const stmt = `
+    SELECT
+        ${IMAGE_TABLE}
+    FROM
+        ${IMAGE_COLUMNS.join()}
+    WHERE
+        deleted_at IS NULL
+    AND
+        pin_id = ?
+    ORDER BY created_at DESC
+    `;
+
+    const res = await mysql.read.query(stmt, [pin_id]);
+
+    return mysql.helpers.parseArrayOfObjFields(res);
+}
+
+interface addImageProps {};
+const addImage = ({}: addImageProps) => {
+    //TODO implement
+}
+
+interface removeImageProps {};
+const removeImage = ({}: removeImageProps) => {
+    //TODO implement
+}
+
 
 export default {
     getOne,
     getMany,
     createOne,
-    deleteOne
+    deleteOne,
+    getImages,
+    addImage,
+    removeImage
 }
